@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
+import { normalizeEmail } from "@/features/auth/creation-guard";
 import { authClient } from "@/lib/auth-client";
 
 const defaultErrorMessage = "Unable to sign in with those credentials.";
@@ -8,7 +9,7 @@ const defaultErrorMessage = "Unable to sign in with those credentials.";
 export const AdminLoginForm = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setIsReady(true);
@@ -18,27 +19,32 @@ export const AdminLoginForm = () => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    startTransition(() => {
-      void submitCredentials(formData);
-    });
+    void submitCredentials(formData);
   };
 
   const submitCredentials = async (formData: FormData) => {
     setErrorMessage(null);
+    setIsSubmitting(true);
 
-    const response = await authClient.signIn.email({
-      email: String(formData.get("email") ?? ""),
-      password: String(formData.get("password") ?? ""),
-      callbackURL: "/admin",
-      rememberMe: true,
-    });
+    try {
+      const response = await authClient.signIn.email({
+        email: normalizeEmail(String(formData.get("email") ?? "")),
+        password: String(formData.get("password") ?? ""),
+        callbackURL: "/admin",
+        rememberMe: true,
+      });
 
-    if (response.error) {
-      setErrorMessage(response.error.message ?? defaultErrorMessage);
-      return;
+      if (response.error) {
+        setErrorMessage(response.error.message ?? defaultErrorMessage);
+        return;
+      }
+
+      window.location.assign("/admin");
+    } catch {
+      setErrorMessage(defaultErrorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    window.location.assign("/admin");
   };
 
   return (
@@ -70,16 +76,20 @@ export const AdminLoginForm = () => {
         />
       </div>
       {errorMessage ? (
-        <p className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
+        <p
+          aria-live="polite"
+          className="rounded-2xl border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm text-rose-100"
+          role="alert"
+        >
           {errorMessage}
         </p>
       ) : null}
       <button
         className="inline-flex w-full items-center justify-center rounded-full bg-[var(--accent-cyan)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-slate-950 transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70"
-        disabled={!isReady || isPending}
+        disabled={!isReady || isSubmitting}
         type="submit"
       >
-        {!isReady ? "Preparing..." : isPending ? "Signing in..." : "Sign in"}
+        {!isReady ? "Preparing..." : isSubmitting ? "Signing in..." : "Sign in"}
       </button>
     </form>
   );

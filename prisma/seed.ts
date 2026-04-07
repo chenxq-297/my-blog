@@ -3,6 +3,7 @@ import {
   defaultSiteSettings,
   defaultSocialLinks,
 } from "../src/features/site-config/defaults";
+import { ensureOwnerAccount } from "../src/features/auth/owner-bootstrap";
 import { defaultHomeSections } from "../src/features/home-sections/defaults";
 import { defaultAboutPage } from "../src/features/about/defaults";
 import { auth } from "../src/lib/auth";
@@ -112,47 +113,18 @@ const seedContent = async () => {
   });
 };
 
-const ensureOwnerAccount = async () => {
+const bootstrapOwnerAccount = async () => {
   const env = getEnv();
-  const existingUser = await db.user.findUnique({
-    where: { email: env.ADMIN_EMAIL },
-    select: { id: true },
-  });
-
-  const userId =
-    existingUser?.id ??
-    (
-      await auth.api.signUpEmail({
-        body: {
-          name: env.ADMIN_NAME,
-          email: env.ADMIN_EMAIL,
-          password: env.ADMIN_PASSWORD,
-        },
-        headers: new Headers({
-          origin: new URL(env.BETTER_AUTH_URL).origin,
-          host: new URL(env.BETTER_AUTH_URL).host,
-        }),
-      })
-    ).user.id;
-
-  await db.user.update({
-    where: { id: userId },
-    data: { name: env.ADMIN_NAME },
-  });
-
-  await db.adminUser.upsert({
-    where: { userId },
-    update: { isOwner: true },
-    create: {
-      userId,
-      isOwner: true,
-    },
+  await ensureOwnerAccount({
+    auth,
+    db,
+    env,
   });
 };
 
 async function main() {
+  await bootstrapOwnerAccount();
   await seedContent();
-  await ensureOwnerAccount();
 }
 
 main()

@@ -1,7 +1,7 @@
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
-import { canCreateUser } from "@/features/auth/registration-guard";
+import { canCreateUser } from "@/features/auth/creation-guard";
 import { db } from "@/lib/db";
 import { getEnv } from "@/lib/env";
 
@@ -31,10 +31,18 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => {
+        before: async (user, context) => {
           const userCount = await db.user.count();
 
-          if (!canCreateUser(userCount)) {
+          if (
+            !canCreateUser({
+              bootstrapSecret: env.BETTER_AUTH_SECRET,
+              configuredEmail: env.ADMIN_EMAIL,
+              existingUserCount: userCount,
+              requestEmail: user.email,
+              requestHeader: context?.headers?.get("x-seed-bootstrap") ?? null,
+            })
+          ) {
             return false;
           }
 

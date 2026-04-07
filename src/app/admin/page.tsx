@@ -1,8 +1,4 @@
-import { requireAdminSession } from "@/features/auth/server";
-
 export default async function AdminDashboardPage() {
-  await requireAdminSession();
-
   return (
     <section className="space-y-6">
       <div className="rounded-[2rem] border border-[var(--line-strong)] bg-[linear-gradient(180deg,rgba(17,24,34,0.94),rgba(10,14,20,0.96))] p-8 shadow-[0_24px_80px_rgba(0,0,0,0.35)]">
