@@ -1,4 +1,30 @@
+import { config } from "dotenv";
+import { existsSync } from "fs";
+import path from "path";
 import { z } from "zod";
+
+const localEnvPath = path.resolve(".env.local");
+const defaultEnvPath = path.resolve(".env");
+let dotenvLoaded = false;
+
+const loadDotenv = () => {
+  if (dotenvLoaded) return;
+  dotenvLoaded = true;
+
+  const loadFile = (filePath: string) => {
+    if (existsSync(filePath)) {
+      config({ path: filePath, override: false });
+      return true;
+    }
+    return false;
+  };
+
+  if (loadFile(localEnvPath)) {
+    return;
+  }
+
+  loadFile(defaultEnvPath);
+};
 
 export const envSchema = z.object({
   DATABASE_URL: z.url(),
@@ -14,6 +40,7 @@ export type Env = z.infer<typeof envSchema>;
 let cachedEnv: Env | undefined;
 
 export const getEnv = (): Env => {
+  loadDotenv();
   if (cachedEnv) return cachedEnv;
 
   cachedEnv = envSchema.parse({
@@ -26,4 +53,9 @@ export const getEnv = (): Env => {
   });
 
   return cachedEnv;
+};
+
+export const resetEnv = () => {
+  cachedEnv = undefined;
+  dotenvLoaded = false;
 };
