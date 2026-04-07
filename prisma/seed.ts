@@ -1,6 +1,3 @@
-import { PrismaClient } from "@prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-
 import {
   defaultNavItems,
   defaultSiteSettings,
@@ -8,21 +5,15 @@ import {
 } from "../src/features/site-config/defaults";
 import { defaultHomeSections } from "../src/features/home-sections/defaults";
 import { defaultAboutPage } from "../src/features/about/defaults";
-
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-  throw new Error("DATABASE_URL is required to run the Prisma seed.");
-}
-
-const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+import { auth } from "../src/lib/auth";
+import { db } from "../src/lib/db";
+import { getEnv } from "../src/lib/env";
 
 const SITE_SETTINGS_ID = "site_settings_default";
 const ABOUT_PAGE_ID = "about_page_default";
 
-async function main() {
-  await prisma.$transaction(async (tx) => {
+const seedContent = async () => {
+  await db.$transaction(async (tx) => {
     await tx.siteSettings.upsert({
       where: { id: SITE_SETTINGS_ID },
       update: {
@@ -119,14 +110,57 @@ async function main() {
       },
     });
   });
+};
+
+const ensureOwnerAccount = async () => {
+  const env = getEnv();
+  const existingUser = await db.user.findUnique({
+    where: { email: env.ADMIN_EMAIL },
+    select: { id: true },
+  });
+
+  const userId =
+    existingUser?.id ??
+    (
+      await auth.api.signUpEmail({
+        body: {
+          name: env.ADMIN_NAME,
+          email: env.ADMIN_EMAIL,
+          password: env.ADMIN_PASSWORD,
+        },
+        headers: new Headers({
+          origin: new URL(env.BETTER_AUTH_URL).origin,
+          host: new URL(env.BETTER_AUTH_URL).host,
+        }),
+      })
+    ).user.id;
+
+  await db.user.update({
+    where: { id: userId },
+    data: { name: env.ADMIN_NAME },
+  });
+
+  await db.adminUser.upsert({
+    where: { userId },
+    update: { isOwner: true },
+    create: {
+      userId,
+      isOwner: true,
+    },
+  });
+};
+
+async function main() {
+  await seedContent();
+  await ensureOwnerAccount();
 }
 
 main()
   .then(async () => {
-    await prisma.$disconnect();
+    await db.$disconnect();
   })
   .catch(async (error) => {
     console.error(error);
-    await prisma.$disconnect();
+    await db.$disconnect();
     process.exit(1);
   });
