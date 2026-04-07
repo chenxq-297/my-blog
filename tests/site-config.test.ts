@@ -127,5 +127,6 @@ describe("site configuration defaults", () => {
 
     expect(defaultAboutPage.principles.length).toBeGreaterThanOrEqual(3);
     expect(defaultAboutPage.principles.every((item) => typeof item === "string")).toBe(true);
+    expect(defaultAboutPage.profileBody).toContain("\n\n");
   });
 });
