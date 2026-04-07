@@ -40,7 +40,8 @@ async function main() {
         siteSettingsId: SITE_SETTINGS_ID,
         href: item.href,
         label: item.label,
-        order: item.order,
+        isVisible: item.isVisible,
+        sortOrder: item.sortOrder,
       })),
     });
 
@@ -50,7 +51,8 @@ async function main() {
         siteSettingsId: SITE_SETTINGS_ID,
         href: item.href,
         label: item.label,
-        order: item.order,
+        isVisible: item.isVisible,
+        sortOrder: item.sortOrder,
       })),
     });
 
@@ -64,20 +66,20 @@ async function main() {
           eyebrow: section.eyebrow ?? null,
           title: section.title,
           description: section.description ?? null,
-          isEnabled: section.isEnabled,
-          order: section.order,
-          sourceCollection: section.sourceCollection,
-          maxItems: section.maxItems,
+          isVisible: section.isVisible,
+          sortOrder: section.sortOrder,
+          sourceCollection: section.sourceCollection ?? null,
+          maxItems: section.maxItems ?? null,
         },
       });
 
       if (section.items.length > 0) {
         await tx.homeSectionItem.createMany({
           data: section.items.map((item) => {
-            if (item.kind === "STAT") {
+            if (item.kind === "HERO_STAT") {
               return {
                 homeSectionId: createdSection.id,
-                order: item.order,
+                sortOrder: item.sortOrder,
                 kind: item.kind,
                 label: item.label,
                 value: item.value,
@@ -87,7 +89,7 @@ async function main() {
             if (item.kind === "PINNED_ENTRY") {
               return {
                 homeSectionId: createdSection.id,
-                order: item.order,
+                sortOrder: item.sortOrder,
                 kind: item.kind,
                 contentCollection: item.contentCollection,
                 slug: item.slug,
@@ -96,7 +98,7 @@ async function main() {
 
             return {
               homeSectionId: createdSection.id,
-              order: item.order,
+              sortOrder: item.sortOrder,
               kind: item.kind,
               label: item.label,
               href: item.href,

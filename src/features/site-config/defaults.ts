@@ -1,5 +1,5 @@
 export type SiteSettingsDefaults = {
-  name: string;
+  siteName: string;
   role: string;
   location: string;
   title: string;
@@ -14,17 +14,19 @@ export type SiteSettingsDefaults = {
 export type NavItemDefaults = {
   href: string;
   label: string;
-  order: number;
+  isVisible: boolean;
+  sortOrder: number;
 };
 
 export type SocialLinkDefaults = {
   href: string;
   label: string;
-  order: number;
+  isVisible: boolean;
+  sortOrder: number;
 };
 
 export const defaultSiteSettings: SiteSettingsDefaults = {
-  name: "Your Name",
+  siteName: "Your Name",
   role: "Software Engineer",
   location: "Shanghai / Remote",
   title: "Code, travel, and notes in progress",
@@ -40,17 +42,16 @@ export const defaultSiteSettings: SiteSettingsDefaults = {
 };
 
 export const defaultNavItems: NavItemDefaults[] = [
-  { href: "/", label: "Home", order: 0 },
-  { href: "/about", label: "About", order: 1 },
-  { href: "/blog", label: "Blog", order: 2 },
-  { href: "/travel", label: "Travel", order: 3 },
-  { href: "/notes", label: "Ideas", order: 4 },
-  { href: "/projects", label: "Projects", order: 5 },
+  { href: "/", label: "Home", isVisible: true, sortOrder: 0 },
+  { href: "/about", label: "About", isVisible: true, sortOrder: 1 },
+  { href: "/blog", label: "Blog", isVisible: true, sortOrder: 2 },
+  { href: "/travel", label: "Travel", isVisible: true, sortOrder: 3 },
+  { href: "/notes", label: "Ideas", isVisible: true, sortOrder: 4 },
+  { href: "/projects", label: "Projects", isVisible: true, sortOrder: 5 },
 ];
 
 export const defaultSocialLinks: SocialLinkDefaults[] = [
-  { href: "https://github.com/your-handle", label: "GitHub", order: 0 },
-  { href: "https://www.linkedin.com/in/your-handle", label: "LinkedIn", order: 1 },
-  { href: "mailto:hello@example.com", label: "Email", order: 2 },
+  { href: "https://github.com/your-handle", label: "GitHub", isVisible: true, sortOrder: 0 },
+  { href: "https://www.linkedin.com/in/your-handle", label: "LinkedIn", isVisible: true, sortOrder: 1 },
+  { href: "mailto:hello@example.com", label: "Email", isVisible: true, sortOrder: 2 },
 ];
-
