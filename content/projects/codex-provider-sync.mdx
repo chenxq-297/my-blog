@@ -1,0 +1,36 @@
+---
+title: "Codex Provider Sync"
+summary: "一个用来同步和管理 Codex provider 配置的本地工具，重点是可靠性、状态一致性和低打扰体验。"
+date: "2026-03-14"
+featured: true
+accent: "cyan"
+tags:
+  - "Node.js"
+  - "CLI"
+  - "Tooling"
+stack:
+  - "Node.js"
+  - "SQLite"
+  - "PowerShell"
+status: "Selected"
+repo: "https://github.com/your-handle/codex-provider-sync"
+demo: "https://example.com/projects/codex-provider-sync"
+---
+
+这个项目的目标不是“做一个功能很多的工具”，而是做一个不会在关键时刻打扰人的工具。
+
+## Problem
+
+当本地 provider 配置不断变化时，最烦人的问题不是改动本身，而是状态不同步、配置文件互相覆盖，以及恢复成本过高。
+
+## Approach
+
+我把重点放在三件事上：
+
+- 配置写入必须可回滚
+- 状态源要尽量单一
+- CLI 交互应该短而稳定
+
+## Outcome
+
+最终产出的不是一个炫技型工具，而是一块真正能嵌进日常工作流里的小基础设施。
