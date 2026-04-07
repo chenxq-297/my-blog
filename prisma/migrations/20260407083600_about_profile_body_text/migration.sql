@@ -11,5 +11,11 @@ ALTER TABLE "about_page"
   USING COALESCE(array_to_string("profileBody", E'\n\n'), '');
 
 ALTER TABLE "about_page"
+  ALTER COLUMN "profileBody" SET NOT NULL;
+
+ALTER TABLE "about_page"
   ALTER COLUMN "profileBodySecondary" TYPE TEXT
   USING COALESCE(array_to_string("profileBodySecondary", E'\n\n'), '');
+
+ALTER TABLE "about_page"
+  ALTER COLUMN "profileBodySecondary" SET NOT NULL;
