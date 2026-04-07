@@ -12,4 +12,17 @@ test("the seeded admin can sign in and reach the dashboard", async ({ page }) =>
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL(/\/admin$/);
   await expect(page.getByRole("heading", { name: "Admin dashboard" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Dashboard" })).toHaveAttribute("href", "/admin");
+  await expect(page.getByRole("link", { name: "Site settings" })).toHaveAttribute(
+    "href",
+    "/admin/site",
+  );
+  await expect(page.getByRole("link", { name: "Home sections" })).toHaveAttribute(
+    "href",
+    "/admin/home",
+  );
+  await expect(page.getByRole("link", { name: "About page" })).toHaveAttribute(
+    "href",
+    "/admin/about",
+  );
 });

@@ -10,7 +10,7 @@ export type AdminSession = NonNullable<Awaited<ReturnType<typeof auth.api.getSes
   };
 };
 
-export const getSession = async () => {
+export const getServerSession = async () => {
   const requestHeaders = await headers();
 
   return auth.api.getSession({
@@ -19,7 +19,7 @@ export const getSession = async () => {
 };
 
 export const getAdminSession = async (): Promise<AdminSession | null> => {
-  const session = await getSession();
+  const session = await getServerSession();
 
   if (!session) {
     return null;

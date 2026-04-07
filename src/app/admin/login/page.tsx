@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { AdminLoginForm } from "@/features/auth/login-form";
-import { getAdminSession } from "@/features/auth/server";
+import { getServerSession } from "@/features/auth/server";
 
 export default async function AdminLoginPage() {
-  const session = await getAdminSession();
+  const session = await getServerSession();
 
   if (session) {
     redirect("/admin");

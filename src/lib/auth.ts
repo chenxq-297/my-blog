@@ -1,6 +1,7 @@
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
+import { canCreateUser } from "@/features/auth/registration-guard";
 import { db } from "@/lib/db";
 import { getEnv } from "@/lib/env";
 
@@ -26,6 +27,21 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          const userCount = await db.user.count();
+
+          if (!canCreateUser(userCount)) {
+            return false;
+          }
+
+          return { data: user };
+        },
+      },
+    },
   },
   plugins: [nextCookies()],
 });
