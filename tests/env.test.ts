@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { envSchema, getEnv, resetEnv } from "../src/lib/env";
 
 const requiredEnvKeys = [
@@ -23,6 +23,7 @@ const envFixture: Record<string, string> = {
 
 const envFilePath = path.resolve(".env.local");
 const baselineEnv = captureEnv();
+let envLocalBackup: { exists: boolean; contents?: string } | null = null;
 
 function captureEnv(): Record<string, string | undefined> {
   return requiredEnvKeys.reduce<Record<string, string | undefined>>((acc, key) => {
@@ -62,10 +63,28 @@ async function removeEnvFile() {
   }
 }
 
+beforeAll(() => {
+  const exists = fs.existsSync(envFilePath);
+  envLocalBackup = { exists };
+  if (exists) {
+    envLocalBackup.contents = fs.readFileSync(envFilePath, "utf8");
+  }
+});
+
 afterEach(async () => {
   restoreEnv(baselineEnv);
   resetEnv();
   await removeEnvFile();
+});
+
+afterAll(async () => {
+  if (!envLocalBackup) return;
+
+  if (envLocalBackup.exists) {
+    fs.writeFileSync(envFilePath, envLocalBackup.contents ?? "", "utf8");
+  } else {
+    await removeEnvFile();
+  }
 });
 
 describe("env schema", () => {
