@@ -208,8 +208,8 @@ model AboutPage {
   title            String   @db.Text
   description      String   @db.Text
   profileHeading   String
-  profileBody      String[]
-  profileBodySecondary String[]
+  profileBody      String   @db.Text
+  profileBodySecondary String   @db.Text
   focusHeading     String
   focusBody        String   @db.Text
   principlesHeading String
