@@ -7,6 +7,7 @@ type AdminNavProps = {
 
 const adminLinks = [
   { href: "/admin", label: "Dashboard" },
+  { href: "/admin/blog", label: "Blog posts" },
   { href: "/admin/site", label: "Site settings" },
   { href: "/admin/home", label: "Home sections" },
   { href: "/admin/about", label: "About page" },

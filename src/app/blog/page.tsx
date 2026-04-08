@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ContentCard } from "@/components/content-card";
 import { SectionHeading } from "@/components/section-heading";
-import { getBlogPosts } from "@/lib/content";
+import { getPublicBlogPosts } from "@/features/blog-posts/queries";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await getBlogPosts();
+  const posts = await getPublicBlogPosts();
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-5 py-14 sm:px-8">

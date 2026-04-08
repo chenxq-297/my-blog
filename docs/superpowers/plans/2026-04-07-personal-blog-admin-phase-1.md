@@ -105,7 +105,7 @@
 - Create: `E:\krs\other\src\lib\db.ts`
 - Test: `E:\krs\other\tests\env.test.ts`
 
-- [ ] **Step 1: Install the backend dependencies**
+- [x] **Step 1: Install the backend dependencies**
 
 Run:
 
@@ -116,7 +116,7 @@ npm install -D prisma tsx
 
 Expected: install completes without dependency resolution errors.
 
-- [ ] **Step 2: Write the failing environment test**
+- [x] **Step 2: Write the failing environment test**
 
 Create `E:\krs\other\tests\env.test.ts`:
 
@@ -140,7 +140,7 @@ describe("env schema", () => {
 });
 ```
 
-- [ ] **Step 3: Run the test to confirm the env module does not exist yet**
+- [x] **Step 3: Run the test to confirm the env module does not exist yet**
 
 Run:
 
@@ -150,7 +150,7 @@ npx vitest run tests/env.test.ts
 
 Expected: the suite fails with `Cannot find module '../src/lib/env'`.
 
-- [ ] **Step 4: Add env parsing, Prisma config, and the shared database client**
+- [x] **Step 4: Add env parsing, Prisma config, and the shared database client**
 
 Update `E:\krs\other\package.json` with these scripts:
 
@@ -239,7 +239,7 @@ ADMIN_NAME="Site Owner"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 ```
 
-- [ ] **Step 5: Re-run the env test**
+- [x] **Step 5: Re-run the env test**
 
 Run:
 
@@ -249,7 +249,7 @@ npx vitest run tests/env.test.ts
 
 Expected: `PASS tests/env.test.ts`.
 
-- [ ] **Step 6: Commit the infrastructure baseline**
+- [x] **Step 6: Commit the infrastructure baseline**
 
 Run:
 
@@ -268,7 +268,7 @@ git commit -m "chore: add backend runtime foundations"
 - Create: `E:\krs\other\src\features\about\defaults.ts`
 - Test: `E:\krs\other\tests\site-config.test.ts`
 
-- [ ] **Step 1: Write the failing defaults test**
+- [x] **Step 1: Write the failing defaults test**
 
 Create `E:\krs\other\tests\site-config.test.ts`:
 
@@ -299,7 +299,7 @@ describe("default admin-managed content", () => {
 });
 ```
 
-- [ ] **Step 2: Run the defaults test**
+- [x] **Step 2: Run the defaults test**
 
 Run:
 
@@ -309,7 +309,7 @@ npx vitest run tests/site-config.test.ts
 
 Expected: the suite fails because the defaults files do not exist yet.
 
-- [ ] **Step 3: Add the default content constants**
+- [x] **Step 3: Add the default content constants**
 
 Create `E:\krs\other\src\features\site-config\defaults.ts` with:
 
@@ -353,7 +353,7 @@ stats in `defaultHomeSectionItems`.
 Create `E:\krs\other\src\features\about\defaults.ts` with the initial About
 eyebrow, title, description, profile copy, focus copy, and `principles` array.
 
-- [ ] **Step 4: Define the Prisma schema**
+- [x] **Step 4: Define the Prisma schema**
 
 Create `E:\krs\other\prisma\schema.prisma` with models for:
 
@@ -376,7 +376,7 @@ Implementation constraints:
 - `AboutPage.principles` should use `Json`
 - `AdminUser.userId` must be unique
 
-- [ ] **Step 5: Add the seed script**
+- [x] **Step 5: Add the seed script**
 
 Create `E:\krs\other\prisma\seed.ts` that:
 
@@ -385,7 +385,7 @@ Create `E:\krs\other\prisma\seed.ts` that:
   `AboutPage` from the defaults
 - does not create the admin login yet, because Better Auth is added in Task 3
 
-- [ ] **Step 6: Generate, migrate, seed, and verify**
+- [x] **Step 6: Generate, migrate, seed, and verify**
 
 Run:
 
@@ -399,7 +399,7 @@ npx vitest run tests/site-config.test.ts
 Expected: Prisma client generation and migration succeed, seed completes, and
 the test passes.
 
-- [ ] **Step 7: Commit the schema and seed layer**
+- [x] **Step 7: Commit the schema and seed layer**
 
 Run:
 
@@ -431,7 +431,7 @@ git commit -m "feat: add admin phase one schema and seed data"
 - Test: `E:\krs\other\tests\owner-bootstrap.test.ts`
 - Test: `E:\krs\other\tests\e2e\admin-auth.spec.ts`
 
-- [ ] **Step 1: Write the failing auth E2E test**
+- [x] **Step 1: Write the failing auth E2E test**
 
 Create `E:\krs\other\tests\e2e\admin-auth.spec.ts`:
 
@@ -453,7 +453,7 @@ test("the seeded admin can sign in and reach the dashboard", async ({ page }) =>
 });
 ```
 
-- [ ] **Step 2: Run the auth E2E test**
+- [x] **Step 2: Run the auth E2E test**
 
 Run:
 
@@ -463,7 +463,7 @@ npx playwright test tests/e2e/admin-auth.spec.ts
 
 Expected: the suite fails because `/admin` and the auth handler do not exist yet.
 
-- [ ] **Step 3: Implement the Better Auth server and client entry points**
+- [x] **Step 3: Implement the Better Auth server and client entry points**
 
 Create `E:\krs\other\src\lib\auth.ts` with:
 
@@ -487,7 +487,7 @@ export const authClient = createAuthClient();
 Create `E:\krs\other\src\app\api\auth\[...all]\route.ts` with the Next.js
 handler export from Better Auth.
 
-- [ ] **Step 4: Update the seed script so the owner account is created through Better Auth**
+- [x] **Step 4: Update the seed script so the owner account is created through Better Auth**
 
 Create `E:\krs\other\src\features\auth\owner-bootstrap.ts` and modify
 `E:\krs\other\prisma\seed.ts` so the owner bootstrap path:
@@ -510,7 +510,7 @@ npx prisma db seed
 Expected: Better Auth updates the Prisma auth models and the seed creates the
 owner account without duplicating it on later runs.
 
-- [ ] **Step 5: Implement the admin session guard and login UI**
+- [x] **Step 5: Implement the admin session guard and login UI**
 
 Create `E:\krs\other\src\features\auth\server.ts` with:
 
@@ -550,7 +550,7 @@ Add focused tests in `E:\krs\other\tests\auth-creation-guard.test.ts`,
 `E:\krs\other\tests\owner-bootstrap.test.ts` to cover the trusted first-user
 guard, non-admin rejection, and the owner bootstrap lock behavior.
 
-- [ ] **Step 6: Re-run the auth E2E test**
+- [x] **Step 6: Re-run the auth E2E test**
 
 Run:
 
@@ -561,7 +561,7 @@ npx playwright test tests/e2e/admin-auth.spec.ts
 
 Expected: the focused unit tests pass and the admin auth E2E checks pass.
 
-- [ ] **Step 7: Commit the auth foundation**
+- [x] **Step 7: Commit the auth foundation**
 
 Run:
 
@@ -585,7 +585,7 @@ git commit -m "feat: add admin authentication flow"
 - Modify: `E:\krs\other\src\components\site-footer.tsx`
 - Test: `E:\krs\other\tests\site-config.test.ts`
 
-- [ ] **Step 1: Replace the defaults test with a validation test for site settings**
+- [x] **Step 1: Replace the defaults test with a validation test for site settings**
 
 Update `E:\krs\other\tests\site-config.test.ts`:
 
@@ -615,7 +615,7 @@ describe("site settings schema", () => {
 });
 ```
 
-- [ ] **Step 2: Run the site-settings test**
+- [x] **Step 2: Run the site-settings test**
 
 Run:
 
@@ -625,7 +625,7 @@ npx vitest run tests/site-config.test.ts
 
 Expected: the suite fails because `site-config/schema.ts` does not exist yet.
 
-- [ ] **Step 3: Implement cache tags, schema validation, queries, and actions**
+- [x] **Step 3: Implement cache tags, schema validation, queries, and actions**
 
 Create `E:\krs\other\src\lib\cache.ts`:
 
@@ -657,7 +657,7 @@ Create `E:\krs\other\src\features\site-config\actions.ts` with:
 - one Prisma transaction that updates the main row and recreates nav/social rows
 - `revalidateTag(cacheTags.site)`
 
-- [ ] **Step 4: Add the admin form and switch the public shell to database reads**
+- [x] **Step 4: Add the admin form and switch the public shell to database reads**
 
 Create `E:\krs\other\src\components\admin\site-settings-form.tsx` with:
 
@@ -683,7 +683,7 @@ Update `E:\krs\other\src\components\site-header.tsx` and
 `E:\krs\other\src\components\site-footer.tsx` to fetch their data from
 `getSiteSettings()` instead of importing hardcoded `siteConfig`.
 
-- [ ] **Step 5: Re-run unit checks and verify the public shell still builds**
+- [x] **Step 5: Re-run unit checks and verify the public shell still builds**
 
 Run:
 
@@ -695,7 +695,7 @@ npm run build
 
 Expected: all three commands pass.
 
-- [ ] **Step 6: Commit the site-settings feature**
+- [x] **Step 6: Commit the site-settings feature**
 
 Run:
 
@@ -716,7 +716,7 @@ git commit -m "feat: add database backed site settings"
 - Create: `E:\krs\other\tests\home-sections.test.ts`
 - Modify: `E:\krs\other\tests\e2e\home.spec.ts`
 
-- [ ] **Step 1: Write the failing home-sections validation test**
+- [x] **Step 1: Write the failing home-sections validation test**
 
 Create `E:\krs\other\tests\home-sections.test.ts`:
 
@@ -742,7 +742,7 @@ describe("home section schema", () => {
 });
 ```
 
-- [ ] **Step 2: Run the home-sections test**
+- [x] **Step 2: Run the home-sections test**
 
 Run:
 
@@ -752,7 +752,7 @@ npx vitest run tests/home-sections.test.ts
 
 Expected: the suite fails because the feature files do not exist yet.
 
-- [ ] **Step 3: Implement the home-section schema, query, and mutation layers**
+- [x] **Step 3: Implement the home-section schema, query, and mutation layers**
 
 Create `E:\krs\other\src\features\home-sections\schema.ts` with:
 
@@ -774,7 +774,7 @@ Create `E:\krs\other\src\features\home-sections\actions.ts` with:
 - a Prisma transaction that updates each `HomeSection`
 - `revalidateTag(cacheTags.home)` and `revalidatePath("/")`
 
-- [ ] **Step 4: Add the admin page and refactor the public homepage**
+- [x] **Step 4: Add the admin page and refactor the public homepage**
 
 Create `E:\krs\other\src\components\admin\home-sections-form.tsx` with:
 
@@ -809,7 +809,7 @@ test("homepage exposes the main sections", async ({ page }) => {
 });
 ```
 
-- [ ] **Step 5: Re-run the homepage unit test, E2E test, and build**
+- [x] **Step 5: Re-run the homepage unit test, E2E test, and build**
 
 Run:
 
@@ -821,7 +821,7 @@ npm run build
 
 Expected: all commands pass.
 
-- [ ] **Step 6: Commit the homepage configuration feature**
+- [x] **Step 6: Commit the homepage configuration feature**
 
 Run:
 
@@ -841,7 +841,7 @@ git commit -m "feat: add configurable homepage sections"
 - Modify: `E:\krs\other\src\app\about\page.tsx`
 - Create: `E:\krs\other\tests\about.test.ts`
 
-- [ ] **Step 1: Write the failing About validation test**
+- [x] **Step 1: Write the failing About validation test**
 
 Create `E:\krs\other\tests\about.test.ts`:
 
@@ -869,7 +869,7 @@ describe("about page schema", () => {
 });
 ```
 
-- [ ] **Step 2: Run the About test**
+- [x] **Step 2: Run the About test**
 
 Run:
 
@@ -879,7 +879,7 @@ npx vitest run tests/about.test.ts
 
 Expected: the suite fails because the feature files do not exist yet.
 
-- [ ] **Step 3: Implement About validation, queries, and actions**
+- [x] **Step 3: Implement About validation, queries, and actions**
 
 Create `E:\krs\other\src\features\about\schema.ts` with all fields from the
 spec, including `principles: z.array(z.string().min(1)).min(1)`.
@@ -895,7 +895,7 @@ Create `E:\krs\other\src\features\about\actions.ts` with:
 - Prisma update against the first `AboutPage` row
 - `revalidateTag(cacheTags.about)` and `revalidatePath("/about")`
 
-- [ ] **Step 4: Add the admin form and refactor the public About page**
+- [x] **Step 4: Add the admin form and refactor the public About page**
 
 Create `E:\krs\other\src\components\admin\about-form.tsx` with labeled fields
 for:
@@ -920,7 +920,7 @@ Update `E:\krs\other\src\app\about\page.tsx` so it:
 - renders the principles list from the stored JSON array
 - preserves the current visual layout structure
 
-- [ ] **Step 5: Re-run the About test and full typecheck**
+- [x] **Step 5: Re-run the About test and full typecheck**
 
 Run:
 
@@ -932,7 +932,7 @@ npm run build
 
 Expected: all commands pass.
 
-- [ ] **Step 6: Commit the About feature**
+- [x] **Step 6: Commit the About feature**
 
 Run:
 
@@ -947,7 +947,7 @@ git commit -m "feat: add configurable about page"
 - Create: `E:\krs\other\tests\e2e\admin-config.spec.ts`
 - Modify: `E:\krs\other\README.md`
 
-- [ ] **Step 1: Write the failing end-to-end config flow test**
+- [x] **Step 1: Write the failing end-to-end config flow test**
 
 Create `E:\krs\other\tests\e2e\admin-config.spec.ts`:
 
@@ -969,7 +969,7 @@ test("saving site settings updates the public homepage", async ({ page }) => {
 });
 ```
 
-- [ ] **Step 2: Run the config E2E test**
+- [x] **Step 2: Run the config E2E test**
 
 Run:
 
@@ -980,7 +980,7 @@ npx playwright test tests/e2e/admin-config.spec.ts
 Expected: the test fails until the site-settings form exposes the labeled field
 and the save flow is wired end to end.
 
-- [ ] **Step 3: Update the local setup documentation**
+- [x] **Step 3: Update the local setup documentation**
 
 Add this section to `E:\krs\other\README.md`:
 
@@ -998,7 +998,7 @@ Add this section to `E:\krs\other\README.md`:
 Default local admin credentials come from `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
 ```
 
-- [ ] **Step 4: Run the full verification suite**
+- [x] **Step 4: Run the full verification suite**
 
 Run:
 
@@ -1012,7 +1012,7 @@ npm run build
 
 Expected: all commands pass.
 
-- [ ] **Step 5: Commit the test and documentation pass**
+- [x] **Step 5: Commit the test and documentation pass**
 
 Run:
 

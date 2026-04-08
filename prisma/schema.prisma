@@ -32,6 +32,12 @@ enum ContentCollection {
   PROJECTS
 }
 
+enum ContentAccent {
+  CYAN
+  VIOLET
+  LIME
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String
@@ -218,4 +224,23 @@ model AboutPage {
   updatedAt        DateTime @updatedAt
 
   @@map("about_page")
+}
+
+model ManagedBlogPost {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  summary     String        @db.Text
+  body        String        @db.Text
+  category    String
+  readingTime String?
+  publishedAt DateTime
+  accent      ContentAccent @default(CYAN)
+  tags        Json
+  featured    Boolean       @default(false)
+  published   Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("managed_blog_posts")
 }

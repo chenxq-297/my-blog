@@ -166,8 +166,8 @@ const makeHomeSections = (overrides?: {
 };
 
 const renderHomePage = async () => {
-  const module = await import("../src/app/page");
-  const element = await module.default();
+  const pageModule = await import("../src/app/page");
+  const element = await pageModule.default();
   return renderToStaticMarkup(element);
 };
 

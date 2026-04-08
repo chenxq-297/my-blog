@@ -1,5 +1,6 @@
 import { getSiteSettings } from "@/features/site-config/queries";
-import { getBlogPosts, getNoteEntries, getTravelEntries } from "@/lib/content";
+import { getPublicBlogPosts } from "@/features/blog-posts/queries";
+import { getNoteEntries, getTravelEntries } from "@/lib/content";
 import { absoluteUrl } from "@/lib/site";
 
 function escapeXml(value: string) {
@@ -14,7 +15,7 @@ function escapeXml(value: string) {
 export async function GET() {
   const [siteSettings, blogPosts, noteEntries, travelEntries] = await Promise.all([
     getSiteSettings(),
-    getBlogPosts(),
+    getPublicBlogPosts(),
     getNoteEntries(),
     getTravelEntries(),
   ]);

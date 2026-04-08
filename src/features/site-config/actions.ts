@@ -6,7 +6,7 @@ import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/db";
 import { siteSettingsSchema } from "./schema";
 
-const revalidateSiteTag = revalidateTag as unknown as (tag: string) => void;
+const revalidateSiteTag = revalidateTag as unknown as (tag: string, profile?: "max") => void;
 
 export const updateSiteSettings = async (input: unknown) => {
   await requireAdminSession();
@@ -64,5 +64,5 @@ export const updateSiteSettings = async (input: unknown) => {
     }
   });
 
-  revalidateSiteTag(cacheTags.site);
+  revalidateSiteTag(cacheTags.site, "max");
 };

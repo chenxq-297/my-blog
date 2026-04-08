@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArticleShell } from "@/components/article-shell";
-import { getBlogPost, getBlogPosts, renderEntryMdx } from "@/lib/content";
+import { getPublicBlogPost, getPublicBlogPosts } from "@/features/blog-posts/queries";
+import { renderEntryMdx } from "@/lib/content";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  const posts = await getBlogPosts();
+  const posts = await getPublicBlogPosts();
   return posts.map((post) => ({ slug: post.slug }));
 }
 
@@ -17,7 +18,7 @@ export async function generateMetadata({
 }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const post = await getBlogPost(slug).catch(() => null);
+  const post = await getPublicBlogPost(slug).catch(() => null);
 
   if (!post) {
     return {};
@@ -32,7 +33,7 @@ export async function generateMetadata({
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
 
-  const post = await getBlogPost(slug).catch(() => null);
+  const post = await getPublicBlogPost(slug).catch(() => null);
 
   if (!post) {
     notFound();

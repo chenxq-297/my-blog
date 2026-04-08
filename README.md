@@ -32,9 +32,24 @@ npm test
 npm run build
 ```
 
+## Backend Admin Setup
+
+1. Copy `.env.example` to `.env.local`.
+2. Start PostgreSQL and create the `personal_blog_dev` database.
+3. Run `npm install`.
+4. Run `npx auth@latest generate --config src/lib/auth.ts --yes`.
+5. Run `npm run db:migrate -- --name init_admin_phase_1`.
+6. Run `npm run db:seed`.
+7. Run `npm run dev` and visit `/admin/login`.
+
+Default local admin credentials come from `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+
 ## First Personalization Pass
 
-- Update site identity, links, and description in `src/lib/site.ts`
+- Sign into `/admin/site` to update site identity, navigation, social links, and metadata copy
+- Sign into `/admin/home` to update the homepage hero and section settings
+- Sign into `/admin/about` to update your profile copy and working principles
+- Sign into `/admin/blog` to create and edit database-backed blog posts
 - Replace sample entries under `content/blog/`, `content/travel/`,
   `content/notes/`, and `content/projects/`
 - Set `NEXT_PUBLIC_SITE_URL` for correct sitemap, feed, and metadata URLs

@@ -1,15 +1,15 @@
 import { unstable_cache } from "next/cache";
 import { cacheTags } from "@/lib/cache";
+import { getPublicBlogPosts } from "@/features/blog-posts/queries";
 import {
-  getBlogPosts,
   getNoteEntries,
   getProjectEntries,
   getTravelEntries,
-  type BlogPost,
   type NoteEntry,
   type ProjectEntry,
   type TravelEntry,
 } from "@/lib/content";
+import type { BlogPost } from "@/lib/content";
 import { db } from "@/lib/db";
 import { sortByDateDescending } from "@/lib/utils";
 import { defaultHomeSections } from "./defaults";
@@ -100,7 +100,10 @@ const dedupeCards = (cards: HomeCard[]) => {
 const findBySlug = <T extends { slug: string }>(entries: T[], slug: string) =>
   entries.find((entry) => entry.slug === slug) ?? null;
 
-const stripItems = ({ items: _items, ...section }: HomeSectionWithItems): HomeSection => section;
+const stripItems = ({ items, ...section }: HomeSectionWithItems): HomeSection => {
+  void items;
+  return section;
+};
 
 const deriveCardsForSection = (
   section: HomeSectionWithItems,
@@ -171,7 +174,7 @@ const readHomeSections = async (): Promise<HomeSectionsView> => {
         },
       },
     }),
-    getBlogPosts(),
+    getPublicBlogPosts(),
     getNoteEntries(),
     getTravelEntries(),
     getProjectEntries(),

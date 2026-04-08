@@ -6,7 +6,7 @@ import { cacheTags } from "@/lib/cache";
 import { db } from "@/lib/db";
 import { homeSectionsSchema } from "./schema";
 
-const revalidateHomeTag = revalidateTag as unknown as (tag: string) => void;
+const revalidateHomeTag = revalidateTag as unknown as (tag: string, profile?: "max") => void;
 
 export const updateHomeSections = async (input: unknown) => {
   await requireAdminSession();
@@ -37,6 +37,6 @@ export const updateHomeSections = async (input: unknown) => {
     }
   });
 
-  revalidateHomeTag(cacheTags.home);
+  revalidateHomeTag(cacheTags.home, "max");
   revalidatePath("/");
 };
