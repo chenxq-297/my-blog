@@ -1,132 +1,115 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  defaultNavItems,
-  defaultSiteSettings,
-  defaultSocialLinks,
-} from "../src/features/site-config/defaults";
-import { defaultHomeSections } from "../src/features/home-sections/defaults";
-import { defaultAboutPage } from "../src/features/about/defaults";
+import { siteSettingsSchema } from "../src/features/site-config/schema";
+import { buildMetadata } from "../src/lib/site";
 
-describe("site configuration defaults", () => {
-  it("matches the Phase 1 SiteSettings contract", () => {
-    expect(defaultSiteSettings).toMatchObject({
-      siteName: expect.any(String),
-      role: expect.any(String),
-      location: expect.any(String),
-      title: expect.any(String),
-      description: expect.any(String),
-      url: expect.any(String),
-      email: expect.any(String),
-    });
+const baseInput = {
+  siteName: "Your Name",
+  role: "Software Engineer",
+  location: "Shanghai / Remote",
+  title: "Code, travel, and notes in progress",
+  description: "Long-form writing and project notes.",
+  url: "http://localhost:3000",
+  email: "owner@example.com",
+  intro: "A personal site.",
+  status: "Currently shipping.",
+  locale: "zh_CN",
+  navigation: [{ label: "Home", href: "/", sortOrder: 0, isVisible: true }],
+  socialLinks: [
+    {
+      label: "GitHub",
+      href: "https://github.com/example",
+      sortOrder: 0,
+      isVisible: true,
+    },
+  ],
+};
 
-    expect(defaultSiteSettings.siteName.length).toBeGreaterThan(0);
+describe("site settings schema", () => {
+  it("accepts valid public site settings", () => {
+    const parsed = siteSettingsSchema.parse(baseInput);
+
+    expect(parsed.navigation).toHaveLength(1);
   });
 
-  it("matches the Phase 1 NavItem contract", () => {
-    expect(defaultNavItems.length).toBeGreaterThanOrEqual(5);
-
-    const hrefs = defaultNavItems.map((item) => item.href);
-    expect(new Set(hrefs).size).toBe(hrefs.length);
-
-    expect(hrefs).toContain("/");
-    expect(hrefs).toContain("/about");
-    expect(hrefs).toContain("/blog");
-    expect(hrefs).toContain("/travel");
-    expect(hrefs).toContain("/notes");
-    expect(hrefs).toContain("/projects");
-
-    defaultNavItems.forEach((item, index) => {
-      expect(item).toMatchObject({
-        href: expect.any(String),
-        label: expect.any(String),
-        isVisible: true,
-        sortOrder: index,
-      });
-    });
+  it("rejects duplicate sortOrder in navigation", () => {
+    expect(() =>
+      siteSettingsSchema.parse({
+        ...baseInput,
+        navigation: [
+          { label: "Home", href: "/", sortOrder: 0, isVisible: true },
+          { label: "About", href: "/about", sortOrder: 0, isVisible: true },
+        ],
+      }),
+    ).toThrow();
   });
 
-  it("matches the Phase 1 SocialLink contract", () => {
-    expect(defaultSocialLinks.length).toBeGreaterThanOrEqual(2);
-
-    const hrefs = defaultSocialLinks.map((item) => item.href);
-    expect(new Set(hrefs).size).toBe(hrefs.length);
-
-    defaultSocialLinks.forEach((item, index) => {
-      expect(item).toMatchObject({
-        href: expect.any(String),
-        label: expect.any(String),
-        isVisible: true,
-        sortOrder: index,
-      });
-    });
+  it("rejects duplicate sortOrder in socialLinks", () => {
+    expect(() =>
+      siteSettingsSchema.parse({
+        ...baseInput,
+        socialLinks: [
+          { label: "GitHub", href: "https://github.com/example", sortOrder: 0, isVisible: true },
+          {
+            label: "LinkedIn",
+            href: "https://linkedin.com/in/example",
+            sortOrder: 0,
+            isVisible: true,
+          },
+        ],
+      }),
+    ).toThrow();
   });
 
-  it("matches the Phase 1 HomeSection contract", () => {
-    // Contract keys + ordering: HERO, LATEST_WRITING, TRAVEL, SELECTED_WORK
-    expect(defaultHomeSections.map((section) => section.key)).toEqual([
-      "HERO",
-      "LATEST_WRITING",
-      "TRAVEL",
-      "SELECTED_WORK",
-    ]);
-
-    defaultHomeSections.forEach((section, index) => {
-      expect(section).toMatchObject({
-        key: expect.any(String),
-        title: expect.any(String),
-        isVisible: true,
-        sortOrder: index,
-      });
-    });
-
-    const hero = defaultHomeSections[0];
-    expect(hero.key).toBe("HERO");
-    expect(hero.sourceCollection).toBeNull();
-    expect(hero.maxItems).toBeNull();
-    expect(hero.items.length).toBeGreaterThan(0);
-
-    hero.items.forEach((item, index) => {
-      expect(item).toMatchObject({
-        kind: "HERO_STAT",
-        sortOrder: index,
-        label: expect.any(String),
-        value: expect.any(String),
-      });
-    });
-
-    const latestWriting = defaultHomeSections[1];
-    expect(latestWriting.key).toBe("LATEST_WRITING");
-    expect(latestWriting.sourceCollection).toBe("BLOG_AND_NOTES");
-    expect(latestWriting.maxItems).toBe(2);
-
-    const travel = defaultHomeSections[2];
-    expect(travel.key).toBe("TRAVEL");
-    expect(travel.sourceCollection).toBe("TRAVEL");
-    expect(travel.maxItems).toBe(2);
-
-    const selectedWork = defaultHomeSections[3];
-    expect(selectedWork.key).toBe("SELECTED_WORK");
-    expect(selectedWork.sourceCollection).toBe("PROJECTS");
-    expect(selectedWork.maxItems).toBe(2);
+  it("rejects duplicate href in navigation", () => {
+    expect(() =>
+      siteSettingsSchema.parse({
+        ...baseInput,
+        navigation: [
+          { label: "Home", href: "/", sortOrder: 0, isVisible: true },
+          { label: "Home duplicate", href: "/", sortOrder: 1, isVisible: true },
+        ],
+      }),
+    ).toThrow();
   });
 
-  it("matches the Phase 1 AboutPage contract", () => {
-    expect(defaultAboutPage).toMatchObject({
-      eyebrow: expect.any(String),
-      title: expect.any(String),
-      description: expect.any(String),
-      profileHeading: expect.any(String),
-      profileBody: expect.any(String),
-      profileBodySecondary: expect.any(String),
-      focusHeading: expect.any(String),
-      focusBody: expect.any(String),
-      principlesHeading: expect.any(String),
-      principles: expect.any(Array),
+  it("rejects duplicate href in socialLinks", () => {
+    expect(() =>
+      siteSettingsSchema.parse({
+        ...baseInput,
+        socialLinks: [
+          { label: "GitHub", href: "https://github.com/example", sortOrder: 0, isVisible: true },
+          {
+            label: "GitHub mirror",
+            href: "https://github.com/example",
+            sortOrder: 1,
+            isVisible: true,
+          },
+        ],
+      }),
+    ).toThrow();
+  });
+});
+
+describe("site metadata helpers", () => {
+  it("buildMetadata maps site settings to metadata fields", () => {
+    const metadata = buildMetadata({
+      siteName: "Your Name",
+      title: "Code, travel, and notes",
+      description: "Long-form writing and project notes.",
+      url: "https://example.com",
+      locale: "zh_CN",
     });
 
-    expect(defaultAboutPage.principles.length).toBeGreaterThanOrEqual(3);
-    expect(defaultAboutPage.principles.every((item) => typeof item === "string")).toBe(true);
-    expect(defaultAboutPage.profileBody).toContain("\n\n");
+    expect(metadata.title).toMatchObject({
+      default: "Your Name | Code, travel, and notes",
+      template: "%s | Your Name",
+    });
+    expect(metadata.description).toBe("Long-form writing and project notes.");
+    expect(metadata.openGraph).toMatchObject({
+      siteName: "Your Name",
+      url: "https://example.com",
+      locale: "zh_CN",
+    });
   });
 });

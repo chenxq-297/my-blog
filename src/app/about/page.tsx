@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SectionHeading } from "@/components/section-heading";
-import { siteConfig } from "@/lib/site";
+import { getSiteSettings } from "@/features/site-config/queries";
 
 export const metadata: Metadata = {
   title: "About",
@@ -14,7 +14,9 @@ const principles = [
   "做作品集时，最看重的是判断、取舍和实现的诚意。",
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const siteSettings = await getSiteSettings();
+
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-5 py-14 sm:px-8">
       <SectionHeading
@@ -29,10 +31,10 @@ export default function AboutPage() {
             Profile
           </p>
           <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white">
-            {siteConfig.name}
+            {siteSettings.siteName}
           </h2>
           <p className="mt-2 text-sm uppercase tracking-[0.18em] text-[var(--muted-dim)]">
-            {siteConfig.role} · {siteConfig.location}
+            {siteSettings.role} · {siteSettings.location}
           </p>
           <div className="mt-8 space-y-5 text-base leading-8 text-[var(--muted-soft)]">
             <p>
@@ -71,3 +73,4 @@ export default function AboutPage() {
     </div>
   );
 }
+

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Noto_Serif_SC, Space_Grotesk } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { defaultMetadata } from "@/lib/site";
+import { getSiteSettings } from "@/features/site-config/queries";
+import { buildMetadata } from "@/lib/site";
 import "./globals.css";
 
 const display = Space_Grotesk({
@@ -22,16 +23,30 @@ const editorial = Noto_Serif_SC({
   weight: ["400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = defaultMetadata;
+export const generateMetadata = async (): Promise<Metadata> => {
+  const settings = await getSiteSettings();
 
-export default function RootLayout({
+  return buildMetadata({
+    siteName: settings.siteName,
+    title: settings.title,
+    description: settings.description,
+    url: settings.url,
+    locale: settings.locale,
+  });
+};
+
+const toHtmlLang = (locale: string) => locale.replace(/_/g, "-");
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+
   return (
     <html
-      lang="zh-CN"
+      lang={toHtmlLang(settings.locale)}
       className={`${display.variable} ${mono.variable} ${editorial.variable} h-full antialiased`}
     >
       <body className="min-h-full">

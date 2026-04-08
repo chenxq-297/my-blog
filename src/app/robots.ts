@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/lib/site";
+import { getSiteSettings } from "@/features/site-config/queries";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const siteSettings = await getSiteSettings();
+
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    sitemap: `${siteSettings.url}/sitemap.xml`,
   };
 }

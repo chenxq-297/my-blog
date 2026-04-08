@@ -1,39 +1,7 @@
 import type { Metadata } from "next";
+import { defaultSiteSettings } from "@/features/site-config/defaults";
 
 export type AccentKey = "cyan" | "violet" | "lime";
-
-export const siteConfig = {
-  name: "Your Name",
-  role: "Software Engineer",
-  location: "Shanghai / Remote",
-  title: "代码、旅途与还在形成的想法",
-  description:
-    "A personal website for a software engineer, collecting long-form writing, travel notes, project case studies, and smaller ideas.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com",
-  email: "hello@example.com",
-  intro:
-    "我把这里当作长期档案馆，记录软件工程、旅行途中看到的结构，以及那些还没长成文章的想法。",
-  status:
-    "Currently building calm systems, shipping small things often, and keeping a better travel log.",
-  navigation: [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/blog", label: "Blog" },
-    { href: "/travel", label: "Travel" },
-    { href: "/notes", label: "Ideas" },
-    { href: "/projects", label: "Projects" },
-  ],
-  socialLinks: [
-    { href: "https://github.com/your-handle", label: "GitHub" },
-    { href: "https://www.linkedin.com/in/your-handle", label: "LinkedIn" },
-    { href: "mailto:hello@example.com", label: "Email" },
-  ],
-  heroStats: [
-    { label: "Base", value: "Shanghai" },
-    { label: "Mode", value: "Specs-first" },
-    { label: "Focus", value: "Writing + Building" },
-  ],
-} as const;
 
 export const accentMap: Record<
   AccentKey,
@@ -68,28 +36,36 @@ export const accentMap: Record<
   },
 };
 
-export const defaultMetadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+type MetadataSiteInput = {
+  siteName: string;
+  title: string;
+  description: string;
+  url: string;
+  locale: string;
+};
+
+export const buildMetadata = (site: MetadataSiteInput): Metadata => ({
+  metadataBase: new URL(site.url),
   title: {
-    default: `${siteConfig.name} | ${siteConfig.title}`,
-    template: `%s | ${siteConfig.name}`,
+    default: `${site.siteName} | ${site.title}`,
+    template: `%s | ${site.siteName}`,
   },
-  description: siteConfig.description,
+  description: site.description,
   openGraph: {
-    title: `${siteConfig.name} | ${siteConfig.title}`,
-    description: siteConfig.description,
-    siteName: siteConfig.name,
+    title: `${site.siteName} | ${site.title}`,
+    description: site.description,
+    siteName: site.siteName,
     type: "website",
-    url: siteConfig.url,
-    locale: "zh_CN",
+    url: site.url,
+    locale: site.locale,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} | ${siteConfig.title}`,
-    description: siteConfig.description,
+    title: `${site.siteName} | ${site.title}`,
+    description: site.description,
   },
-};
+});
 
-export function absoluteUrl(pathname: string) {
-  return new URL(pathname, siteConfig.url).toString();
+export function absoluteUrl(pathname: string, siteUrl: string = defaultSiteSettings.url) {
+  return new URL(pathname, siteUrl).toString();
 }

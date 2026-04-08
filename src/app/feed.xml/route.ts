@@ -1,5 +1,6 @@
+import { getSiteSettings } from "@/features/site-config/queries";
 import { getBlogPosts, getNoteEntries, getTravelEntries } from "@/lib/content";
-import { siteConfig } from "@/lib/site";
+import { absoluteUrl } from "@/lib/site";
 
 function escapeXml(value: string) {
   return value
@@ -11,7 +12,8 @@ function escapeXml(value: string) {
 }
 
 export async function GET() {
-  const [blogPosts, noteEntries, travelEntries] = await Promise.all([
+  const [siteSettings, blogPosts, noteEntries, travelEntries] = await Promise.all([
+    getSiteSettings(),
     getBlogPosts(),
     getNoteEntries(),
     getTravelEntries(),
@@ -19,14 +21,18 @@ export async function GET() {
 
   const items = [...blogPosts, ...noteEntries, ...travelEntries]
     .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
-    .slice(0, 20);
+    .slice(0, 20)
+    .map((item) => ({
+      ...item,
+      absoluteHref: absoluteUrl(item.href, siteSettings.url),
+    }));
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>${escapeXml(siteConfig.name)}</title>
-    <link>${siteConfig.url}</link>
-    <description>${escapeXml(siteConfig.description)}</description>
+    <title>${escapeXml(siteSettings.siteName)}</title>
+    <link>${siteSettings.url}</link>
+    <description>${escapeXml(siteSettings.description)}</description>
     ${items
       .map(
         (item) => `
